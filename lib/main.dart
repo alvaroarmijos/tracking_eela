@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_eela/bloc/gps_bloc.dart';
 import 'package:tracking_eela/pages/gps_page.dart';
 import 'package:tracking_eela/ui/app_theme.dart';
 
@@ -11,7 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
-      home: const GpsPage(),
+      home: BlocProvider(
+        create: (context) => GpsBloc()
+          ..add(GpsInitialStatusEvent())
+          ..add(ChangeGpsStatusEvent()),
+        child: const GpsPage(),
+      ),
       theme: AppTheme.light,
     );
   }

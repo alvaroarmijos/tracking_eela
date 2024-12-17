@@ -1,6 +1,13 @@
 part of 'gps_bloc.dart';
 
-@immutable
-sealed class GpsState {}
+class GpsState {
+  GpsState({
+    this.isGpsEnabled = false,
+    this.isLocationPermissionsGranted = false,
+  });
 
-final class GpsInitial extends GpsState {}
+  final bool isGpsEnabled;
+  final bool isLocationPermissionsGranted;
+
+  // copyWith
+}
