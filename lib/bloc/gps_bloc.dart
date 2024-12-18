@@ -25,9 +25,12 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
     GpsInitialStatusEvent event,
     Emitter<GpsState> emit,
   ) async {
-    final isGpsEnable = await Geolocator.isLocationServiceEnabled();
-    emit(GpsState(
-      isGpsEnabled: isGpsEnable,
+    final isGpsEnabled = await Geolocator.isLocationServiceEnabled();
+    final isLocationPermissionGranted = await ph.Permission.location.isGranted;
+
+    emit(state.copyWith(
+      isGpsEnabled: isGpsEnabled,
+      isLocationPermissionsGranted: isLocationPermissionGranted,
     ));
   }
 
@@ -44,10 +47,8 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
       Geolocator.getServiceStatusStream(),
       onData: (status) {
         final isGpsEnabled = status == ServiceStatus.enabled;
-        final isLocationGranted = state.isLocationPermissionsGranted;
-        return GpsState(
+        return state.copyWith(
           isGpsEnabled: isGpsEnabled,
-          isLocationPermissionsGranted: isLocationGranted,
         );
       },
     );
@@ -65,13 +66,6 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
       return;
     }
 
-    final isGpsEnable = state.isGpsEnabled;
-
-    return emit(
-      GpsState(
-        isGpsEnabled: isGpsEnable,
-        isLocationPermissionsGranted: true,
-      ),
-    );
+    return emit(state.copyWith(isLocationPermissionsGranted: true));
   }
 }
