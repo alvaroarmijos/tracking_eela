@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracking_eela/bloc/gps_bloc.dart';
+import 'package:tracking_eela/src/features/gps/bloc/gps_bloc.dart';
 
 class PermissionsGps extends StatelessWidget {
   const PermissionsGps({super.key});

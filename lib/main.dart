@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracking_eela/bloc/gps_bloc.dart';
 import 'package:tracking_eela/pages/loading_page.dart';
-import 'package:tracking_eela/ui/app_theme.dart';
+import 'package:tracking_eela/src/core/ui/app_theme.dart';
+import 'package:tracking_eela/src/features/gps/bloc/gps_bloc.dart';
+import 'package:tracking_eela/src/features/map/blocs/cubit/map_cubit.dart';
+import 'package:tracking_eela/src/features/map/blocs/location/location_bloc.dart';
 
 void main() => runApp(const MyApp());
 
@@ -13,10 +15,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
-      home: BlocProvider(
-        create: (context) => GpsBloc()
-          ..add(GpsInitialStatusEvent())
-          ..add(ChangeGpsStatusEvent()),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => GpsBloc()
+              ..add(GpsInitialStatusEvent())
+              ..add(ChangeGpsStatusEvent()),
+          ),
+          BlocProvider(
+            create: (context) => LocationBloc()
+              ..add(
+                InitialLocationEvent(),
+              )
+              ..add(StartTrackingUserEvent()),
+          ),
+          BlocProvider(
+            create: (context) => MapCubit(),
+          ),
+        ],
         child: const LoadingPage(),
       ),
       theme: AppTheme.light,
