@@ -1,6 +1,21 @@
 part of 'map_cubit.dart';
 
-@immutable
-sealed class MapState {}
+class MapState {
+  MapState({
+    this.polylines = const {},
+    this.isPolylineShown = true,
+  });
 
-final class MapInitial extends MapState {}
+  final Map<String, Polyline> polylines;
+  final bool isPolylineShown;
+
+  MapState copyWith({
+    final Map<String, Polyline>? polylines,
+    final bool? isPolylineShown,
+  }) {
+    return MapState(
+      polylines: polylines ?? this.polylines,
+      isPolylineShown: isPolylineShown ?? this.isPolylineShown,
+    );
+  }
+}

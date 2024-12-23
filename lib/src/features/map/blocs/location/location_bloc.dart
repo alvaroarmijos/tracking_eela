@@ -38,7 +38,29 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
       Geolocator.getPositionStream(),
       onData: (position) {
         final lastKnownLocation = LatLng(position.latitude, position.longitude);
-        return state.copyWith(lastKnownLocation: lastKnownLocation);
+        // 0
+        // []
+        // 1 (Lat1, Long1)
+        // [(Lat1, Long1)]
+        // 2 (Lat2, Long2)
+        // [(Lat1, Long1), (Lat2, Long2)]
+        // 3 (Lat3, Long3)
+        // [(Lat1, Long1), (Lat2, Long2), (Lat3, Long3)]
+
+        // 0
+        // []
+        // 1 (Lat1, Long1)
+        // [(Lat1, Long1)]
+        // 2 (Lat2, Long2)
+        // [(Lat2, Long2), (Lat1, Long1)]
+        // 3 (Lat3, Long3)
+        // [(Lat3, Long3), (Lat2, Long2), (Lat1, Long1)]
+
+        final newHistory = [...state.myLocationHistory, lastKnownLocation];
+        return state.copyWith(
+          lastKnownLocation: lastKnownLocation,
+          myLocationHistory: newHistory,
+        );
       },
     );
   }
