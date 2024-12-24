@@ -14,12 +14,14 @@ class FloatingActionsMap extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton.small(
+          heroTag: 'polyline',
           onPressed: () {
             mapCubit.toggleShowPolyline();
           },
           child: const Icon(Icons.more_horiz),
         ),
         FloatingActionButton.small(
+          heroTag: 'location',
           onPressed: () {
             final lastKnownLocation =
                 context.read<LocationBloc>().state.lastKnownLocation;
