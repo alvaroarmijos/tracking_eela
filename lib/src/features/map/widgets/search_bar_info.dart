@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_eela/src/features/map/blocs/search/search_cubit.dart';
 import 'package:tracking_eela/src/features/map/widgets/widgets.dart';
 
 class SearchBarInfo extends StatelessWidget {
@@ -15,11 +17,19 @@ class SearchBarInfo extends StatelessWidget {
             children: [
               const RunningInfo(),
               IconButton(
-                onPressed: () {
-                  showSearch(
+                onPressed: () async {
+                  final searchResult = await showSearch(
                     context: context,
                     delegate: SearchDestionationDelegate(),
                   );
+
+                  if (searchResult == null || searchResult.cancel == true) {
+                    return;
+                  }
+
+                  if (searchResult.manualMarker) {
+                    context.read<SearchCubit>().updateShowManualMarker(true);
+                  }
                 },
                 icon: const Icon(
                   Icons.search,

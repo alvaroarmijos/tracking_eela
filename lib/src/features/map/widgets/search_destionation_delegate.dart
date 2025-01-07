@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tracking_eela/src/features/map/models/search_result.dart';
 
-class SearchDestionationDelegate extends SearchDelegate {
+class SearchDestionationDelegate extends SearchDelegate<SearchResult> {
+  SearchDestionationDelegate()
+      : super(
+          searchFieldLabel: "Buscar...",
+        );
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -19,7 +25,8 @@ class SearchDestionationDelegate extends SearchDelegate {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       onPressed: () {
-        close(context, null);
+        const searchResult = SearchResult(cancel: true);
+        close(context, searchResult);
       },
       icon: const Icon(
         Icons.navigate_before,
@@ -39,7 +46,11 @@ class SearchDestionationDelegate extends SearchDelegate {
       leading: const Icon(Icons.location_on_outlined),
       title: const Text('Colocar la ubicación en el mapa'),
       onTap: () {
-        close(context, null);
+        const searchResult = SearchResult(
+          cancel: false,
+          manualMarker: true,
+        );
+        close(context, searchResult);
       },
     );
   }
