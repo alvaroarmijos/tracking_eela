@@ -36,7 +36,10 @@ class MapPage extends StatelessWidget {
               return Stack(
                 children: [
                   MapSection(lastKownLocation: lastKownLocation),
-                  BlocBuilder<SearchCubit, SearchState>(
+                  BlocConsumer<SearchCubit, SearchState>(
+                    listenWhen: (previous, current) =>
+                        previous.route?.points != current.route?.points,
+                    listener: _listenState,
                     builder: (context, state) {
                       return state.showManualMarker
                           ? const ManualMarker()
@@ -51,5 +54,11 @@ class MapPage extends StatelessWidget {
       ),
       floatingActionButton: const FloatingActionsMap(),
     );
+  }
+
+  void _listenState(BuildContext context, SearchState state) {
+    if (state.route != null && state.route?.points != null) {
+      context.read<MapCubit>().addRoutePolyline(state.route!.points);
+    }
   }
 }

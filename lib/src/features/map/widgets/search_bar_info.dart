@@ -22,11 +22,9 @@ class SearchBarInfo extends StatelessWidget {
                     context: context,
                     delegate: SearchDestionationDelegate(),
                   );
-
                   if (searchResult == null || searchResult.cancel == true) {
                     return;
                   }
-
                   if (searchResult.manualMarker) {
                     context.read<SearchCubit>().updateShowManualMarker(true);
                   }

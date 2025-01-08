@@ -8,6 +8,7 @@ class MapCubit extends Cubit<MapState> {
   MapCubit() : super(MapState());
 
   GoogleMapController? _mapController;
+  LatLng? mapCenter;
 
   void onMapInitialized(GoogleMapController controller) {
     _mapController = controller;
@@ -40,6 +41,36 @@ class MapCubit extends Cubit<MapState> {
 
     final currentPolylines = Map<String, Polyline>.from(state.polylines);
     currentPolylines['myRoute'] = myRoute;
+
+    // {
+    // 'myRoute': NewPolyline1,
+    // 'directions': Polyline2,
+    // }
+
+    emit(
+      state.copyWith(
+        polylines: currentPolylines,
+      ),
+    );
+  }
+
+  void addRoutePolyline(List<LatLng> points) {
+    final direction = Polyline(
+      polylineId: const PolylineId('direction'),
+      points: points,
+      color: Colors.black,
+      width: 5,
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
+    );
+
+    // {
+    // 'myRoute': Polyline1,
+    // 'directions': Polyline2,
+    // }
+
+    final currentPolylines = Map<String, Polyline>.from(state.polylines);
+    currentPolylines['direction'] = direction;
 
     // {
     // 'myRoute': NewPolyline1,

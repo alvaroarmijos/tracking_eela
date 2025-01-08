@@ -66,6 +66,9 @@ class MapSection extends StatelessWidget {
           // },
           polylines:
               state.isPolylineShown ? state.polylines.values.toSet() : {},
+          onCameraMove: (cameraPosition) {
+            mapCubit.mapCenter = cameraPosition.target;
+          },
         );
       },
     );

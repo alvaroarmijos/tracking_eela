@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_eela/src/features/map/blocs/cubit/map_cubit.dart';
+import 'package:tracking_eela/src/features/map/blocs/location/location_bloc.dart';
 import 'package:tracking_eela/src/features/map/blocs/search/search_cubit.dart';
 
 class ManualMarker extends StatelessWidget {
@@ -42,7 +44,16 @@ class ManualMarker extends StatelessWidget {
               horizontal: 32,
             ),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                final locationBloc = context.read<LocationBloc>();
+                final start = locationBloc.state.lastKnownLocation;
+
+                final mapCubit = context.read<MapCubit>();
+                final end = mapCubit.mapCenter;
+
+                if (start == null || end == null) return;
+                context.read<SearchCubit>().getRoute(start, end);
+              },
               child: const Text('Confirmar'),
             ),
           ),
