@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_eela/src/features/map/blocs/location/location_bloc.dart';
 import 'package:tracking_eela/src/features/map/blocs/search/search_cubit.dart';
 import 'package:tracking_eela/src/features/map/widgets/widgets.dart';
 
@@ -22,11 +23,23 @@ class SearchBarInfo extends StatelessWidget {
                     context: context,
                     delegate: SearchDestionationDelegate(),
                   );
-                  if (searchResult == null || searchResult.cancel == true) {
+                  if (searchResult == null ||
+                      searchResult.cancel == true ||
+                      !context.mounted) {
                     return;
                   }
+
                   if (searchResult.manualMarker) {
                     context.read<SearchCubit>().updateShowManualMarker(true);
+                  }
+                  if (searchResult.place != null) {
+                    final locationBloc = context.read<LocationBloc>();
+                    final start = locationBloc.state.lastKnownLocation;
+
+                    final end = searchResult.place!.center;
+
+                    if (start == null) return;
+                    context.read<SearchCubit>().getRoute(start, end);
                   }
                 },
                 icon: const Icon(

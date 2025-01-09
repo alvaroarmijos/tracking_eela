@@ -14,8 +14,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SearchCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => SearchCubit(),
+        ),
+        BlocProvider(
+          create: (context) => LocationBloc()
+            ..add(
+              InitialLocationEvent(),
+            )
+            ..add(StartTrackingUserEvent()),
+        ),
+      ],
       child: MaterialApp(
         title: 'Material App',
         home: MultiBlocProvider(
@@ -24,13 +35,6 @@ class MyApp extends StatelessWidget {
               create: (context) => GpsBloc()
                 ..add(GpsInitialStatusEvent())
                 ..add(ChangeGpsStatusEvent()),
-            ),
-            BlocProvider(
-              create: (context) => LocationBloc()
-                ..add(
-                  InitialLocationEvent(),
-                )
-                ..add(StartTrackingUserEvent()),
             ),
             BlocProvider(
               create: (context) => MapCubit(),

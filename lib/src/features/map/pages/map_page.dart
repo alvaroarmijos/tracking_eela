@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_eela/src/core/widgets/loading_dialog.dart';
 import 'package:tracking_eela/src/features/map/blocs/cubit/map_cubit.dart';
 import 'package:tracking_eela/src/features/map/blocs/location/location_bloc.dart';
 import 'package:tracking_eela/src/features/map/blocs/search/search_cubit.dart';
@@ -38,7 +39,7 @@ class MapPage extends StatelessWidget {
                   MapSection(lastKownLocation: lastKownLocation),
                   BlocConsumer<SearchCubit, SearchState>(
                     listenWhen: (previous, current) =>
-                        previous.route?.points != current.route?.points,
+                        previous.isLoading != current.isLoading,
                     listener: _listenState,
                     builder: (context, state) {
                       return state.showManualMarker
@@ -58,7 +59,13 @@ class MapPage extends StatelessWidget {
 
   void _listenState(BuildContext context, SearchState state) {
     if (state.route != null && state.route?.points != null) {
-      context.read<MapCubit>().addRoutePolyline(state.route!.points);
+      context.read<MapCubit>().addRoutePolyline(state.route!);
+    }
+
+    if (state.isLoading) {
+      showLoadingMessage(context);
+    } else {
+      Navigator.pop(context);
     }
   }
 }

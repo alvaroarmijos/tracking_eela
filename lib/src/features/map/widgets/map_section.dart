@@ -69,6 +69,17 @@ class MapSection extends StatelessWidget {
           onCameraMove: (cameraPosition) {
             mapCubit.mapCenter = cameraPosition.target;
           },
+          markers: state.markers.values.toSet(),
+          // markers: {
+          //   Marker(
+          //     markerId: const MarkerId('start'),
+          //     position: lastKownLocation,
+          //     infoWindow: const InfoWindow(
+          //       title: 'Start',
+          //       snippet: 'Punto de inicio',
+          //     ),
+          //   )
+          // },
         );
       },
     );

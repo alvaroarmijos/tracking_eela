@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:tracking_eela/src/data/routes/domain/route.dart' as data;
 
 part 'map_state.dart';
 
@@ -54,10 +55,10 @@ class MapCubit extends Cubit<MapState> {
     );
   }
 
-  void addRoutePolyline(List<LatLng> points) {
+  void addRoutePolyline(data.Route route) {
     final direction = Polyline(
       polylineId: const PolylineId('direction'),
-      points: points,
+      points: route.points,
       color: Colors.black,
       width: 5,
       startCap: Cap.roundCap,
@@ -77,9 +78,35 @@ class MapCubit extends Cubit<MapState> {
     // 'directions': Polyline2,
     // }
 
+    // Markers
+
+    String distanceKm = (((route.distance ?? 0) / 1000)).toStringAsFixed(2);
+    int time = ((route.duration ?? 0) / 60).toInt();
+    // Google map markers
+    final startMarker = Marker(
+      markerId: const MarkerId('start'),
+      position: route.points.first,
+      infoWindow: InfoWindow(
+        title: 'Punto de inicio',
+        snippet: 'km $distanceKm',
+      ),
+    );
+    final endMarker = Marker(
+        markerId: const MarkerId('end'),
+        position: route.points.last,
+        infoWindow: InfoWindow(
+          title: 'Punto final',
+          snippet: 'Tiempo: $time minutos',
+        ));
+
+    final currentMarkers = Map<String, Marker>.from(state.markers);
+    currentMarkers['start'] = startMarker;
+    currentMarkers['end'] = endMarker;
+
     emit(
       state.copyWith(
         polylines: currentPolylines,
+        markers: currentMarkers,
       ),
     );
   }
