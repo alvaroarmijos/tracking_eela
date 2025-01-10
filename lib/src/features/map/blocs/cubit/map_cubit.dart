@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:tracking_eela/src/core/utils/custom_images_markers.dart';
+import 'package:tracking_eela/src/core/utils/latlng_bounds.dart';
+import 'package:tracking_eela/src/core/utils/widget_to_markers.dart';
 import 'package:tracking_eela/src/data/routes/domain/route.dart' as data;
 
 part 'map_state.dart';
@@ -20,6 +23,13 @@ class MapCubit extends Cubit<MapState> {
   void moveCamera(LatLng position) {
     final cameraUpdate = CameraUpdate.newLatLng(position);
     _mapController?.moveCamera(cameraUpdate);
+  }
+
+  void centerCameraPoints(List<LatLng> points) {
+    final bounds = getLatLngBounds(points);
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngBounds(bounds, 100),
+    );
   }
 
   void addUserPolyline(List<LatLng> points) {
@@ -55,7 +65,7 @@ class MapCubit extends Cubit<MapState> {
     );
   }
 
-  void addRoutePolyline(data.Route route) {
+  void addRoutePolyline(data.Route route) async {
     final direction = Polyline(
       polylineId: const PolylineId('direction'),
       points: route.points,
@@ -83,25 +93,88 @@ class MapCubit extends Cubit<MapState> {
     String distanceKm = (((route.distance ?? 0) / 1000)).toStringAsFixed(2);
     int time = ((route.duration ?? 0) / 60).toInt();
     // Google map markers
-    final startMarker = Marker(
+    // final startMarker = Marker(
+    //   markerId: const MarkerId('start'),
+    //   position: route.points.first,
+    //   infoWindow: InfoWindow(
+    //     title: 'Punto de inicio',
+    //     snippet: 'km $distanceKm',
+    //   ),
+    // );
+    // final endMarker = Marker(
+    //     markerId: const MarkerId('end'),
+    //     position: route.points.last,
+    //     infoWindow: InfoWindow(
+    //       title: 'Punto final',
+    //       snippet: 'Tiempo: $time minutos',
+    //     ));
+
+    final assetIcon = await getAssetsImageMarker();
+
+    // // Assets Markers
+    // final startAssetMarker = Marker(
+    //   markerId: const MarkerId('start'),
+    //   position: route.points.first,
+    //   infoWindow: InfoWindow(
+    //     title: 'Punto de inicio',
+    //     snippet: 'km $distanceKm',
+    //   ),
+    //   icon: assetIcon,
+    // );
+
+    // final endAssetMarker = Marker(
+    //   markerId: const MarkerId('end'),
+    //   position: route.points.last,
+    //   infoWindow: InfoWindow(
+    //     title: 'Punto final',
+    //     snippet: 'Tiempo: $time minutos',
+    //   ),
+    //   icon: assetIcon,
+    // );
+
+    final networkMarker = await getNetworkImageMarker();
+
+    // Network Markers
+    // final startNetworkMarker = Marker(
+    //   markerId: const MarkerId('start'),
+    //   position: route.points.first,
+    //   infoWindow: InfoWindow(
+    //     title: 'Punto de inicio',
+    //     snippet: 'km $distanceKm',
+    //   ),
+    //   icon: networkMarker,
+    // );
+
+    final endNetworkMarker = Marker(
+      markerId: const MarkerId('end'),
+      position: route.points.last,
+      infoWindow: InfoWindow(
+        title: 'Punto final',
+        snippet: 'Tiempo: $time minutos',
+      ),
+      icon: networkMarker,
+    );
+
+    // Start uber Marker
+    final startUberIcon =
+        await getStartUberMarker(time.toString(), 'Supermaxi');
+
+    final startUberMarker = Marker(
       markerId: const MarkerId('start'),
       position: route.points.first,
+      anchor: const Offset(0.1, 1),
       infoWindow: InfoWindow(
         title: 'Punto de inicio',
         snippet: 'km $distanceKm',
       ),
+      icon: startUberIcon,
     );
-    final endMarker = Marker(
-        markerId: const MarkerId('end'),
-        position: route.points.last,
-        infoWindow: InfoWindow(
-          title: 'Punto final',
-          snippet: 'Tiempo: $time minutos',
-        ));
 
     final currentMarkers = Map<String, Marker>.from(state.markers);
-    currentMarkers['start'] = startMarker;
-    currentMarkers['end'] = endMarker;
+    currentMarkers['start'] = startUberMarker;
+    currentMarkers['end'] = endNetworkMarker;
+
+    centerCameraPoints(route.points);
 
     emit(
       state.copyWith(

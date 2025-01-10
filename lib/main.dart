@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
             ),
           ],
           child: const LoadingPage(),
+          // child: const TestPage(),
         ),
         theme: AppTheme.light,
       ),

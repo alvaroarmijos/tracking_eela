@@ -41,6 +41,8 @@ class SearchDestionationDelegate extends SearchDelegate<SearchResult> {
   Widget buildResults(BuildContext context) {
     final proximity = context.read<LocationBloc>().state.lastKnownLocation;
 
+    if (query.isEmpty) return _buildSuggestions(context);
+
     context.read<SearchCubit>().searchPlaces(query, proximity!);
     return BlocBuilder<SearchCubit, SearchState>(
       builder: (context, state) {
@@ -74,6 +76,10 @@ class SearchDestionationDelegate extends SearchDelegate<SearchResult> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    return _buildSuggestions(context);
+  }
+
+  Widget _buildSuggestions(BuildContext context) {
     return ListTile(
       iconColor: Colors.purple,
       leading: const Icon(Icons.location_on_outlined),
